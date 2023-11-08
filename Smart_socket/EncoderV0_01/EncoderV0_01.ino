@@ -1,7 +1,7 @@
 #include <Encoder.h>
 
-// Піни для енкодера
-const int encoderPinA = 13; // Виберіть піни, що підтримують зовнішні інтерупти
+
+const int encoderPinA = 13;
 const int encoderPinB = 12;
 // Пін для кнопки
 const int buttonPin = 14;
