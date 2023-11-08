@@ -3,12 +3,12 @@
 
 const int encoderPinA = 13;
 const int encoderPinB = 12;
-// Пін для кнопки
+
 const int buttonPin = 14;
-// Пін світлодіода (використовуйте пін, що підтримує PWM)
+
 const int ledPin = 2; 
 
-// Ініціалізація об'єкту енкодера
+
 Encoder myEnc(encoderPinA, encoderPinB);
 // Остання зчитана позиція енкодера
 long lastEncoderPosition  = 0;
