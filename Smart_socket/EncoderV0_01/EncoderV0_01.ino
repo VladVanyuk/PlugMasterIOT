@@ -1,64 +1,105 @@
-#include <Encoder.h>
+#include <Arduino.h>
+#include <EncButton.h>
+
+#define ENC_PIN_R D7
+#define ENC_PIN_L D6
+#define ENC_PIN_BTN D5
+
+#define SERIAL_SPD 115200
+
+EncButton eb(ENC_PIN_R, ENC_PIN_L, ENC_PIN_BTN);
+
+int britnes;
+bool state;
+
+void setup() 
+{
+    Serial.begin(SERIAL_SPD);
+    britnes = 0;
+    state = 1;
+    pinMode(LED_BUILTIN, OUTPUT);
+   // digitalWrite(LED_BUILTIN, state);
+   analogWrite(LED_BUILTIN, britnes = 127);
 
 
-const int encoderPinA = 13;
-const int encoderPinB = 12;
 
-const int buttonPin = 14;
+    eb.setBtnLevel(LOW);
+    eb.setClickTimeout(500);
+    eb.setDebTimeout(50);
+    eb.setHoldTimeout(600);
+    eb.setStepTimeout(200);
 
-const int ledPin = 2; 
+    eb.setEncReverse(0);
+    eb.setEncType(EB_STEP4_LOW);
+    eb.setFastTimeout(30);
+
+    
+    eb.counter = 0;
+    
 
 
-Encoder myEnc(encoderPinA, encoderPinB);
-// Остання зчитана позиція енкодера
-long lastEncoderPosition  = 0;
-
-// Змінна для зберігання стану кнопки
-bool lastButtonState = HIGH; 
-// Зберігає останній час, коли кнопка була натиснута
-unsigned long lastDebounceTime = 0;  
-// Затримка для "дребезгу" кнопки
-unsigned long debounceDelay = 50;    
-// Чи вмиканий світлодіод
-bool ledState = false;
-
-void setup() {
-  pinMode(ledPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP);
-  Serial.begin(9600);
 }
 
-void loop() {
-  // Опитування енкодера
-  long encoderPosition = myEnc.read() / 4; // Ділімо на 4 для кожного кроку енкодера
-  if (encoderPosition != lastEncoderPosition) {
-    lastEncoderPosition = encoderPosition;
-    int brightness = map(encoderPosition, 0, 1023, 0, 255); // Відображення значення енкодера на значення PWM
-    analogWrite(ledPin, brightness);
-    Serial.print("Яскравість: ");
-    Serial.println(brightness);
-  }
-  
-  // Опитування кнопки
-  bool reading = digitalRead(buttonPin);
+void change_state()
+{
+  state = !state;
+  digitalWrite(LED_BUILTIN, state);
+}
 
-  if (reading != lastButtonState) {
-    lastDebounceTime = millis();
+void pwm_led_up()
+{
+  if(state == 0){
+  britnes++;
+  analogWrite(LED_BUILTIN, britnes);
   }
+}
 
-  if ((millis() - lastDebounceTime) > debounceDelay) {
-    // Якщо стан кнопки стабілізувався
-    if (reading != lastButtonState) {
-      lastButtonState = reading;
-      // Змінюємо стан світлодіода тільки якщо кнопка була відпущена
-      if (lastButtonState == LOW) {
-        ledState = !ledState;
-        // Якщо світлодіод має бути вимкнений, встановлюємо яскравість у 0
-        analogWrite(ledPin, ledState ? map(encoderPosition, 0, 1023, 0, 255) : 0);
-      }
+void pwm_led_dwn()
+{
+  if(state == 0){
+  britnes--;
+  analogWrite(LED_BUILTIN, britnes);
+  }
+}
+
+void loop() 
+{
+    eb.tick();
+
+
+    // обработка поворота раздельная
+    if (eb.left()) pwm_led_dwn();
+    if (eb.right()) pwm_led_up();
+    if (eb.leftH()) Serial.println("leftH");
+    if (eb.rightH()) Serial.println("rightH");
+
+
+    if(eb.press())
+    {
+      change_state();
     }
-  }
+
+    if (eb.click()) Serial.println("click");
+
+    if (eb.release()) {
+      Serial.println("release");
+
+      Serial.print("clicks: ");
+      Serial.print(eb.getClicks());
+      Serial.print(", steps: ");
+      Serial.print(eb.getSteps());
+      Serial.print(", press for: ");
+      Serial.print(eb.pressFor());
+      Serial.print(", hold for: ");
+      Serial.print(eb.holdFor());
+      Serial.print(", step for: ");
+      Serial.println(eb.stepFor());
+    }
+
+   
+   
+
   
-  // Затримка для зменшення дребезгу кнопки
-  delay(50);
+
+   
 }
