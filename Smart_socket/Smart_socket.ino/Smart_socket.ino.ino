@@ -55,16 +55,7 @@ void setup() {
     Serial.println("SSD1306 allocation failed");
     for(;;);
   }
-  delay(2000);
-
-  display.setFont(&FreeSerif9pt7b);
-  display.clearDisplay();
-  display.setTextSize(1);             
-  display.setTextColor(WHITE);        
-  display.setCursor(0,20);             
-  display.println("Hello, world!");
-  display.display();
-  delay(2000); 
+  
 }
 void change_state()
 {
@@ -82,8 +73,35 @@ void encoder_handler()
   if (eb.click()) Serial.println("click");
 }
 
+void led_oled ()
+{
+  if (state == OFF) {
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0,0);
+    display.println("LED is OFF!");
+    display.display();
+    
+    display.clearDisplay();
+    display.display();
+  } else {
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0,0);
+    display.println("LED is ON!");
+    display.display();
+    
+    display.clearDisplay();
+    display.display();
+  }
+
+}
+
 
 void loop() {
    eb.tick();
   encoder_handler();
+  led_oled ();
 }
