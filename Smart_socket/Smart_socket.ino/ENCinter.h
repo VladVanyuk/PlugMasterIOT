@@ -6,6 +6,7 @@
 #define ENC_PIN_L D6
 #define ENC_PIN_BTN D5
 
+bool flag_changed= false;
 
 enum LED_STATE{ON, OFF};
 
@@ -20,6 +21,7 @@ void function_on_interrupt()
   if (read_button() == switched) {
     state = HIGH - state;
     digitalWrite(LED_BUILTIN, state);
+    flag_changed =true;
   } else {
     Serial.println("don't click");
   }
@@ -43,5 +45,11 @@ void encoder_setup() {
 }
 
 void encoder_handler() {
+
+   if(flag_changed)
+   {
+      Serial.println("WOW TRIGGER");
+      flag_changed =false;
+   }
   
 }
