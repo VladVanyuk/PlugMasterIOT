@@ -6,13 +6,8 @@
 #define ENC_PIN_L D6
 #define ENC_PIN_BTN D5
 
-#define switched true // value if the button switch has been pressed
-#define triggered true // controls interrupt handler
 
-#define debounce 10 // time to wait in milliseconds
-
-#define ON 0
-#define OFF 1
+enum LED_STATE{ON, OFF};
 
 EncButton eb(ENC_PIN_R, ENC_PIN_L, ENC_PIN_BTN);
 
@@ -34,7 +29,7 @@ void encoder_setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(button_switch, INPUT_PULLUP);
   //pinMode l, r
-  attachInterrupt(digitalPinToInterrupt(button_switch()ENC_PIN_BTN), function_on_interrupt, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_BTN), function_on_interrupt, CHANGE);
   
   eb.setClickTimeout(500);
   eb.setDebTimeout(50);
