@@ -19,8 +19,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 EncButton eb(ENC_PIN_R, ENC_PIN_L, ENC_PIN_BTN);
 
 // Replace with your network credentials
-const char* ssid     = "shotytam";
-const char* password = "shotytambar";
+const char* ssid     = "252";
+const char* password = "123456789";
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -162,16 +162,16 @@ void wifi_client()
                     client.println("Connection: close");
                     client.println();
                     
-                    // turns the GPIO on and off
-                    if (header.indexOf("GET /on") >= 0) {
-                        Serial.println("GPIO on");
-                        state = "ON";
-                        digitalWrite(LED_BUILTIN, HIGH);
-                    } else if (header.indexOf("GET /off") >= 0) {
-                        Serial.println("GPIO off");
-                        state = "OFF";
-                        digitalWrite(LED_BUILTIN, LOW);
-                    }
+                   if (header.indexOf("GET /on") >= 0) {
+                   Serial.println("GPIO on");
+                   state = ON; // Використовуйте константу ON
+                   digitalWrite(LED_BUILTIN, HIGH);
+                   } else if (header.indexOf("GET /off") >= 0) {
+                   Serial.println("GPIO off");
+                    state = OFF; // Використовуйте константу OFF
+                     digitalWrite(LED_BUILTIN, LOW);
+                     }
+
                     
                     // Display the HTML web page
                     client.println("<!DOCTYPE html><html>");
@@ -180,26 +180,26 @@ void wifi_client()
                     // CSS to style the on/off button 
                     // Feel free to change the background-color and font-size attributes to fit your preferences
                     client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-                    client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
+                    client.println(".button { background-color: #800000; border: none; color: white; padding: 16px 40px;");
                     client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-                    client.println(".button2 {background-color: #77878A;}</style></head>");
+                    client.println(".button2 {background-color: #195B6A;}</style></head>");
                     
                     // Web Page Heading
-                    client.println("<body><h1>ESP8266 Web Server</h1>");
+                    client.println("<body><h1>ESP8266 Web Controll LED</h1>");
                     
                     // Display current state, and ON/OFF button for the GPIO  
                     client.print("<p>GPIO - State ");
                     if (state == OFF) {
-                      client.print("OFF");
-                      } else {
                       client.print("ON");
+                      } else {
+                      client.print("OFF");
                         }
                       client.println("</p>");
                     // If the outputState is off, it displays the ON button       
                     if (state == OFF) {
-                        client.println("<p><a href=\"/on\"><button class=\"button\">ON</button></a></p>");
+                        client.println("<p><a href=\"/on\"><button class=\"button\">OFF</button></a></p>");
                     } else {
-                        client.println("<p><a href=\"/off\"><button class=\"button button2\">OFF</button></a></p>");
+                        client.println("<p><a href=\"/off\"><button class=\"button button2\">ON</button></a></p>");
                     } 
                     
                     client.println("</body></html>");
