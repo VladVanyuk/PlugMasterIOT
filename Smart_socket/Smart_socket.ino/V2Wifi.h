@@ -1,26 +1,10 @@
+#include <Arduino.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <EncButton.h>
-// Load Wi-Fi library
 #include <ESP8266WiFi.h>
 
-#define ENC_PIN_R D7
-#define ENC_PIN_L D6
-#define ENC_PIN_BTN D5
-
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-
-#define ON 0
-#define OFF 1
-
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-EncButton eb(ENC_PIN_R, ENC_PIN_L, ENC_PIN_BTN);
-
 // Replace with your network credentials
-const char* ssid     = "252";
-const char* password = "123456789";
+const char* ssid     = "shotytam";
+const char* password = "shotytambar";
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -34,38 +18,16 @@ unsigned long previousTime = 0;
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
 
-bool previousLedState = OFF;
-bool screenNeedsUpdate = false;
-bool state = OFF;
-
-const long interval = 2000;
-unsigned long previousMillis = 0;
-
-void encoder_setup() 
-{
- eb.setBtnLevel(LOW);
-  eb.setClickTimeout(500);
-  eb.setDebTimeout(50);
-  eb.setHoldTimeout(600);
-  eb.setStepTimeout(200);
-
-  eb.setEncReverse(0);
-  eb.setEncType(EB_STEP4_LOW);
-  eb.setFastTimeout(30);
-  eb.counter = 0;
-}
-
 void wifi_setup()
 {
   // Connect to Wi-Fi network with SSID and password
-  Serial.print("Connecting to ");
+ Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  // Print local IP address and start web server
   Serial.println("");
   Serial.println("WiFi connected.");
   Serial.println("IP address: ");
@@ -73,67 +35,9 @@ void wifi_setup()
   server.begin();
 }
 
-void setup() {
-  Serial.begin(115200);
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.clearDisplay();
-  display.display();
-
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, state);
-
-  encoder_setup();
+void wifi_mode(){
+  WiFi.mode(WIFI_STA);
   wifi_setup();
-}
-
-void change_state() {
-  state = !state;
-  digitalWrite(LED_BUILTIN, state);
-}
-
-void encoder_handler() {
-  eb.tick();
-  if (eb.press()) {
-    change_state();
-  }
-
-  if (eb.click()) {
-    Serial.println("click");
-  }
-}
-
-void led_oled() {
-  unsigned long currentMillis = millis();
-
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
-
-    // Отримати стан світлодіода
-    bool currentState = digitalRead(LED_BUILTIN);
-
-    // Перевірити зміну стану світлодіода
-    if (currentState != previousLedState) {
-      screenNeedsUpdate = true;
-      previousLedState = currentState;
-    }
-
-    if (screenNeedsUpdate) {
-      display.clearDisplay();
-      display.setTextSize(1);
-      display.setTextColor(SSD1306_WHITE);
-      display.setCursor(0, 0);
-
-      if (currentState == ON) {
-        display.println("LED is ON!");
-      } else {
-        display.println("LED is OFF!");
-      }
-
-      display.display();
-
-      screenNeedsUpdate = false;
-    }
-  }
 }
 
 void wifi_client()
@@ -171,18 +75,37 @@ void wifi_client()
                     state = OFF; // Використовуйте константу OFF
                      digitalWrite(LED_BUILTIN, LOW);
                      }
+                
+                      if (header.indexOf("GET /?ssid=") >= 0) {
+                        int ssidStart = header.indexOf("ssid=") + 5;
+                      int ssidEnd = header.indexOf("&", ssidStart);
+                       String receivedSSID = header.substring(ssidStart, ssidEnd);
+
+                      int passStart = header.indexOf("password=") + 9;
+                      int passEnd = header.indexOf(" HTTP/", passStart);
+                      String receivedPassword = header.substring(passStart, passEnd);
+
+                      Serial.println("Received SSID: " + receivedSSID);
+                      Serial.println("Received Password: " + receivedPassword);
+
+                      ssid = receivedSSID.c_str();
+                       password = receivedPassword.c_str();
+                      }
 
                     
                     // Display the HTML web page
-                    client.println("<!DOCTYPE html><html>");
-                    client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-                    client.println("<link rel=\"icon\" href=\"data:,\">");
-                    // CSS to style the on/off button 
-                    // Feel free to change the background-color and font-size attributes to fit your preferences
-                    client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-                    client.println(".button { background-color: #800000; border: none; color: white; padding: 16px 40px;");
-                    client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-                    client.println(".button2 {background-color: #195B6A;}</style></head>");
+                                client.println("<!DOCTYPE html><html>");
+                                client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+                                client.println("<link rel=\"icon\" href=\"data:,\">");
+                                client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+                                client.println(".button { background-color: #800000; border: none; color: white; padding: 16px 40px;");
+                                client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+                                client.println(".button2 {background-color: #195B6A;}</style></head>");
+                                client.println("<body><h1>ESP8266 Web Control LED</h1>");
+                                client.print("<form method=\"get\">");
+                                client.println("SSID: <input type=\"text\" name=\"ssid\"><br>");
+                                client.println("Password: <input type=\"password\" name=\"password\"><br>");
+                                client.println("<input type=\"submit\" value=\"Submit\"></form>");
                     
                     // Web Page Heading
                     client.println("<body><h1>ESP8266 Web Controll LED</h1>");
@@ -223,10 +146,4 @@ void wifi_client()
     Serial.println("Client disconnected.");
     Serial.println("");
  }
-}
-
-void loop() {
-  encoder_handler();
-  led_oled();
-  wifi_client();
 }
