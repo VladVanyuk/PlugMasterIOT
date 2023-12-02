@@ -6,38 +6,33 @@
 const char* ssid     = "shotytam";
 const char* password = "shotytambar";
 
-// Set web server port number to 80
-WiFiServer server(80);
+#define PORT 80
+
+WiFiServer server(PORT);
 
 // Variable to store the HTTP request
 String header;
-// Current time
+
 unsigned long currentTime = millis();
-// Previous time
 unsigned long previousTime = 0; 
-// Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
 
 void wifi_setup()
 {
   // Connect to Wi-Fi network with SSID and password
- Serial.print("Connecting to ");
+  Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
+  // Print local IP address and start web server
   Serial.println("");
   Serial.println("WiFi connected.");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   server.begin();
-}
-
-void wifi_mode(){
-  WiFi.mode(WIFI_STA);
-  wifi_setup();
 }
 
 void wifi_client()
@@ -75,37 +70,18 @@ void wifi_client()
                     state = OFF; // Використовуйте константу OFF
                      digitalWrite(LED_BUILTIN, LOW);
                      }
-                
-                      if (header.indexOf("GET /?ssid=") >= 0) {
-                        int ssidStart = header.indexOf("ssid=") + 5;
-                      int ssidEnd = header.indexOf("&", ssidStart);
-                       String receivedSSID = header.substring(ssidStart, ssidEnd);
-
-                      int passStart = header.indexOf("password=") + 9;
-                      int passEnd = header.indexOf(" HTTP/", passStart);
-                      String receivedPassword = header.substring(passStart, passEnd);
-
-                      Serial.println("Received SSID: " + receivedSSID);
-                      Serial.println("Received Password: " + receivedPassword);
-
-                      ssid = receivedSSID.c_str();
-                       password = receivedPassword.c_str();
-                      }
 
                     
                     // Display the HTML web page
-                                client.println("<!DOCTYPE html><html>");
-                                client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-                                client.println("<link rel=\"icon\" href=\"data:,\">");
-                                client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-                                client.println(".button { background-color: #800000; border: none; color: white; padding: 16px 40px;");
-                                client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-                                client.println(".button2 {background-color: #195B6A;}</style></head>");
-                                client.println("<body><h1>ESP8266 Web Control LED</h1>");
-                                client.print("<form method=\"get\">");
-                                client.println("SSID: <input type=\"text\" name=\"ssid\"><br>");
-                                client.println("Password: <input type=\"password\" name=\"password\"><br>");
-                                client.println("<input type=\"submit\" value=\"Submit\"></form>");
+                    client.println("<!DOCTYPE html><html>");
+                    client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+                    client.println("<link rel=\"icon\" href=\"data:,\">");
+                    // CSS to style the on/off button 
+                    // Feel free to change the background-color and font-size attributes to fit your preferences
+                    client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+                    client.println(".button { background-color: #800000; border: none; color: white; padding: 16px 40px;");
+                    client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+                    client.println(".button2 {background-color: #195B6A;}</style></head>");
                     
                     // Web Page Heading
                     client.println("<body><h1>ESP8266 Web Controll LED</h1>");

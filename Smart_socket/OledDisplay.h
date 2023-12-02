@@ -11,7 +11,6 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 bool previousLedState = OFF;
 bool screenNeedsUpdate = false;
 
-
 const long interval = 2000;
 unsigned long previousMillis = 0;
 
@@ -22,30 +21,35 @@ void Oled_setup()
   display.display();
 }
 
-void led_oled() {
+void oled_handler()
+{
   unsigned long currentMillis = millis();
 
-  if (currentMillis - previousMillis >= interval) {
+  if (currentMillis - previousMillis >= interval)
+  {
     previousMillis = currentMillis;
 
-    // Отримати стан світлодіода
     bool currentState = digitalRead(LED_BUILTIN);
 
-    // Перевірити зміну стану світлодіода
-    if (currentState != previousLedState) {
+    if (currentState != previousLedState)
+    {
       screenNeedsUpdate = true;
       previousLedState = currentState;
     }
 
-    if (screenNeedsUpdate) {
+    if (screenNeedsUpdate)
+    {
       display.clearDisplay();
       display.setTextSize(1);
       display.setTextColor(SSD1306_WHITE);
       display.setCursor(0, 0);
 
-      if (currentState == ON) {
+      if (currentState == ON)
+      {
         display.println("LED is ON!");
-      } else {
+      }
+      else
+      {
         display.println("LED is OFF!");
       }
 
@@ -55,5 +59,3 @@ void led_oled() {
     }
   }
 }
-
-
