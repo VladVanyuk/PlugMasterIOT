@@ -8,22 +8,19 @@
 #include "pins.h"
 #include "Relay.h"
 
-#define ENC_CLICK_TIMEOUT 500
-#define ENC_DEB_TIMEOUT 50
-#define ENC_HOLD_TIMEOUT 600
-#define ENC_STEP_TIMEOUT 200
-#define ENC_FAST_TIMEOUT 30
+//#define ENC_CLICK_TIMEOUT 500
+//#define ENC_DEB_TIMEOUT 50
+//#define ENC_HOLD_TIMEOUT 600
+//#define ENC_STEP_TIMEOUT 200
+//#define ENC_FAST_TIMEOUT 30
+
+bool enc_change = false; 
 
 EncButton EncBtn(ENC_PIN_R, ENC_PIN_L, ENC_PIN_BTN);
 
-IRAM_ATTR void btn_isr()
-{
-  relay_state_changed = true;
-  EncBtn.tickISR();
-}
-
 IRAM_ATTR void enc_isr()
 {
+  enc_change = true;
   EncBtn.tickISR();
 }
 
@@ -34,6 +31,7 @@ void encoder_callback()
   {
   case EB_PRESS:
     Serial.println("press");
+    relay_state_changed = true;
     break;
   case EB_HOLD:
     Serial.println("hold");
@@ -53,10 +51,12 @@ void encoder_callback()
     break;
   case EB_CLICK:
     Serial.println("click");
+    relay_state_changed = true;
     break;
   case EB_CLICKS:
     Serial.print("clicks ");
     Serial.println(EncBtn.getClicks());
+    relay_state_changed = true;
     break;
   case EB_TURN:
     Serial.print("turn ");
@@ -83,10 +83,12 @@ void encoder_callback()
   default:
     Serial.println();
   }
+  enc_change = false;
 }
 
 void encoder_setup()
 {
+  /*
   EncBtn.setBtnLevel(LOW);
   EncBtn.setClickTimeout(ENC_CLICK_TIMEOUT);
   EncBtn.setDebTimeout(ENC_DEB_TIMEOUT);
@@ -95,9 +97,9 @@ void encoder_setup()
   EncBtn.setFastTimeout(ENC_FAST_TIMEOUT);
   EncBtn.setEncReverse(false);
   EncBtn.setEncType(EB_STEP4_LOW);
-  eb.counter = 0;
-
-  attachInterrupt(digitalPinToInterrupt(ENC_PIN_BTN), btn_isr, CHANGE);
+  EncBtn.counter = 0;
+*/
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_BTN), enc_isr, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_PIN_L), enc_isr, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ENC_PIN_R), enc_isr, CHANGE);
   EncBtn.setEncISR(true);
@@ -106,7 +108,9 @@ void encoder_setup()
 
 void encoder_handler()
 {
-   eb.tick();
+  if (enc_change == true) {
+    EncBtn.tick();
+  }
 }
 
 #endif //Encoder_h
