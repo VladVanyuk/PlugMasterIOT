@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <ESP8266WiFi.h>
+#include "Relay.h"
+
+#include "Relay.h"
 
 // Replace with your network credentials
 const char* ssid     = "shotytam";
@@ -63,11 +66,11 @@ void wifi_client()
                     
                    if (header.indexOf("GET /on") >= 0) {
                    Serial.println("GPIO on");
-                   state = ON; // Використовуйте константу ON
+                   relay_state = ON; // Використовуйте константу ON
                    digitalWrite(LED_BUILTIN, HIGH);
                    } else if (header.indexOf("GET /off") >= 0) {
                    Serial.println("GPIO off");
-                    state = OFF; // Використовуйте константу OFF
+                    relay_state = OFF; // Використовуйте константу OFF
                      digitalWrite(LED_BUILTIN, LOW);
                      }
 
@@ -88,14 +91,14 @@ void wifi_client()
                     
                     // Display current state, and ON/OFF button for the GPIO  
                     client.print("<p>GPIO - State ");
-                    if (state == OFF) {
+                    if (relay_state == OFF) {
                       client.print("ON");
                       } else {
                       client.print("OFF");
                         }
                       client.println("</p>");
                     // If the outputState is off, it displays the ON button       
-                    if (state == OFF) {
+                    if (relay_state == OFF) {
                         client.println("<p><a href=\"/on\"><button class=\"button\">OFF</button></a></p>");
                     } else {
                         client.println("<p><a href=\"/off\"><button class=\"button button2\">ON</button></a></p>");

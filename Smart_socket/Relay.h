@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "pins.h"
 
+
 #ifndef TRUE
 #define TRUE true
 #define FALSE false
@@ -13,18 +14,17 @@
 #define RELAY_OFF digitalWrite(RELAY_PIN, TRUE)
 #define RELAY_STATE(x) digitalWrite(RELAY_PIN, x)
 
-typedef enum RelayState_t
+typedef enum 
 {
     ON,
     OFF
-};
+} RelayState_t;
 
 bool relay_state;
 bool relay_state_changed = false;
 
 bool relay_change_flag();
 bool toggle_relay_state();
-bool get_relay_state();
 bool set_relay_state(RelayState_t state);
 
 bool relay_change_flag()

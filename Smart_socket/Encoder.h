@@ -95,9 +95,9 @@ void encoder_setup()
   EncBtn.setFastTimeout(ENC_FAST_TIMEOUT);
   EncBtn.setEncReverse(false);
   EncBtn.setEncType(EB_STEP4_LOW);
-  eb.counter = 0;
+  EncBtn.counter = 0;
 
-  attachInterrupt(digitalPinToInterrupt(ENC_PIN_BTN), btn_isr, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ENC_PIN_BTN), btn_isr, FALLING);
   attachInterrupt(digitalPinToInterrupt(ENC_PIN_L), enc_isr, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ENC_PIN_R), enc_isr, CHANGE);
   EncBtn.setEncISR(true);
@@ -106,7 +106,7 @@ void encoder_setup()
 
 void encoder_handler()
 {
-   eb.tick();
+   EncBtn.tick();
 }
 
 #endif //Encoder_h
