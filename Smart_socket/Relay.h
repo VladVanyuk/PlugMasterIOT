@@ -13,7 +13,7 @@
 #define RELAY_OFF digitalWrite(RELAY_PIN, TRUE)
 #define RELAY_STATE(x) digitalWrite(RELAY_PIN, x)
 
-typedef enum RelayState_t
+enum RelayState_t
 {
     ON,
     OFF
@@ -40,10 +40,6 @@ bool toggle_relay_state()
     return relay_state;
 }
 
-RelayState_t get_relay_state()
-{
-    return (RelayState_t)relay_state;
-}
 
 bool set_relay_state(RelayState_t state)
 {

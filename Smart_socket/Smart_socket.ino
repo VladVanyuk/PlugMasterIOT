@@ -43,6 +43,10 @@ void setup(){
 
 void loop() 
 {
+#if (ENCODER_SERVICE == 1)
+  encoder_handler();
+#endif
+
 #if (RELAY_SERVICE == 1)
   relay_handler();
 #endif
