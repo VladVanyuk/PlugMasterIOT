@@ -1,3 +1,4 @@
+#pragma once
 #include <Arduino.h>
 #include <Wire.h>
 #include <ESP8266WiFi.h>
@@ -6,8 +7,8 @@
 #include "Relay.h"
 
 // Replace with your network credentials
-const char* ssid     = "shotytam";
-const char* password = "shotytambar";
+const char* ssid     = "AsusLyra";
+const char* password = "123456qwerty";
 
 #define PORT 80
 
