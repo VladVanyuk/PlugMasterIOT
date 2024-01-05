@@ -41,7 +41,7 @@ void setup(){
   wifi_setup();
 #endif
 
-#if (SENSORE_SERVICE== 1)
+#if (SENSOR_SERVICE== 1)
   Sen_setup();
 #endif
 }
@@ -60,7 +60,7 @@ void loop()
   wifi_client();
 #endif
 
-  #if (SENSORE_SERVICE== 1)
+  #if (SENSOR_SERVICE== 1)
   Sensor();
 #endif
 }

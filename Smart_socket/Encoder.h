@@ -14,6 +14,11 @@
 #define ENC_STEP_TIMEOUT 200
 #define ENC_FAST_TIMEOUT 30
 
+
+
+
+conf1.ENC_CLICK_TIMEOUT
+
 EncButton EncBtn(ENC_PIN_R, ENC_PIN_L, ENC_PIN_BTN);
 
 IRAM_ATTR void btn_isr()
