@@ -9,7 +9,6 @@
 #define B_FALSE(bp,bb)   bp &= ~(bb)
 #define B_READ(bp,bb)    bool(bp & bb)
 
-
 #ifndef FOREVER
 #define FOREVER for(;;)
 #endif
