@@ -9,9 +9,7 @@
 #define FALSE false
 #endif
 
-#define RELAY_ON digitalWrite(RELAY_PIN, FALSE)
-#define RELAY_OFF digitalWrite(RELAY_PIN, TRUE)
-#define RELAY_STATE(x) digitalWrite(RELAY_PIN, x)
+
 
 enum RelayState_t
 {
@@ -25,6 +23,7 @@ bool relay_state_changed = false;
 bool relay_change_flag();
 bool toggle_relay_state();
 bool get_relay_state();
+
 bool set_relay_state(RelayState_t state);
 
 bool relay_change_flag()

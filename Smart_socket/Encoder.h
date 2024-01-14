@@ -16,6 +16,11 @@
 
 bool enc_change = false; 
 
+
+
+
+conf1.ENC_CLICK_TIMEOUT
+
 EncButton EncBtn(ENC_PIN_R, ENC_PIN_L, ENC_PIN_BTN);
 
 IRAM_ATTR void enc_isr()

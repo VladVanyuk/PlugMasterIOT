@@ -8,6 +8,7 @@
 #include "Encoder.h"
 #include "OledDisplay.h"
 #include "WIfi_client.h"
+#include "Sensor.h"
 
 #define SERIAL_SPD 115200
 
@@ -39,6 +40,10 @@ void setup(){
 #if (WIFI_SERVICE == 1)
   wifi_setup();
 #endif
+
+#if (SENSOR_SERVICE== 1)
+  Sen_setup();
+#endif
 }
 
 void loop() 
@@ -57,5 +62,9 @@ void loop()
 
 #if (WIFI_SERVICE == 1)
   wifi_client();
+#endif
+
+  #if (SENSOR_SERVICE== 1)
+  Sensor();
 #endif
 }
